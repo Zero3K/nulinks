@@ -1,8 +1,8 @@
-# unchained-torrent
-### The website is build using Python, Django, HTML, CSS, Bootstrap and JavaScript.
+# unchained-links
+### The website is built using Python, Django, HTML, CSS, Bootstrap and JavaScript.
 #### Features of the website:
 - Creation of user account.
-- Uploading files by registered users.
+- Posting Fopnu links by registered users.
 - Seaching and downloading files.
 
 ## Home
