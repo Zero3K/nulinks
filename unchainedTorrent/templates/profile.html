@@ -4,7 +4,7 @@
 
 <div class="container my-2 py-2">
     <div class="alert alert-info" role="alert">
-        <strong>Hi {{request.user.username}}</strong>, These are the files uploaded by you.
+        <strong>Hi {{request.user.username}}</strong>, here are the links you have posted:
     </div>
 </div>
 
@@ -13,7 +13,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Added On</th>
+                <th>Added on</th>
                 <th>Link</th>
             </tr>
         </thead>
@@ -23,7 +23,7 @@
             <tr>
                 <td>{{tFile.name}}</td>
                 <td>{{tFile.uploadTime}}</td>
-                <td><a href="/media/{{tFile.location}}">Download</a</td>
+                <td><a href="{{tFile.location}}">Load link</a></td>
             </tr>
         </tbody>
         {% endfor %}

@@ -17,9 +17,10 @@ def register(request):
     return render(request, 'register.html')
 
 @login_required(login_url="/login/")
-def model_form_upload(request):
+
+def get_name(request):
     if request.method == 'POST':
-        fileUploadForm = TorrentFileForm(request.POST, request.FILES)
+        fileUploadForm = TorrentFileForm(request.POST)
 
 
         if fileUploadForm.is_valid():
@@ -28,10 +29,9 @@ def model_form_upload(request):
             # name of the uploader
             torrentForm.uploader = request.user.username
 
-            #name of the file
-            torrentForm.name = request.FILES['location'].name #location being the name of input tag
+            #address of the link
+            torrentForm.name = request.POST.get('location', 'default_value')
 
-            #torrentForm.name = fileUploadForm.fields['location'].files.name
             torrentForm.save()
             #return HttpResponse("form is valid")
             return redirect('profile')

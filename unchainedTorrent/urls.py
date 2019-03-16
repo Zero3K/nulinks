@@ -40,7 +40,8 @@ urlpatterns = [
     url(r'^logout/$',userViews.myLogout,  name='urlLogout'),
 
     url(r'^signup/$', userViews.signup, name='signup'),
-    url(r'^upload/$', viewsFiles.model_form_upload, name='upload'),
+    #url(r'^upload/$', viewsFiles.model_form_upload, name='upload'),
+    url(r'^upload/$', viewsFiles.get_name, name='upload'),
 
     url(r'^search(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='search'),
 

@@ -4,12 +4,12 @@
 
 <div class="container d-flex justify-content-center jumbotron jumbotron-fluid my-2 py-4">
     <form class="form-inline" action="search" method="get" >
-        <input class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" type="text" name="q" placeholder="Search For Torrent">
+        <input class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" type="text" name="q" placeholder="Search for link">
         <button type="input" class="btn btn-primary  mb-2">Search</button>
     </form>
 </div>
 <div class="container alert alert-info" role="alert">
-<strong>Recent Uploads</strong>
+<strong>Recent links</strong>
 </div>
 
 <div class="container">
@@ -17,9 +17,9 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Added On</th>
+                <th>Added on</th>
                 <th>Link</th>
-                <th>Uploaded By</th>
+                <th>Posted by</th>
             </tr>
         </thead>
 
@@ -29,7 +29,7 @@
             <tr>
                 <td>{{tFile.name}}</td>
                 <td>{{tFile.uploadTime}}</td>
-                <td><a href="media/{{tFile.location}}">Download</a</td>
+                <td><a href="{{tFile.location}}">Load link</a></td>
                 <td>{{tFile.uploader}}</td>
             </tr>
             {% endfor %}
