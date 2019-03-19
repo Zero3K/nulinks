@@ -1,4 +1,4 @@
-# Unchained Links
+# Nulinks
 ### The website is built using Python, Django, HTML, CSS, Bootstrap and JavaScript.
 #### Features of the website:
 - Creation of user account.
