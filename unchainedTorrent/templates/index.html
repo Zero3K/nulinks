@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 container alert alert-info" role="alert">
-            <strong>Links</strong>
+            <strong>Uploaded Links</strong>
         </div>
     </div>
 
@@ -16,8 +16,8 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Added on</th>
                         <th>Link</th>
+                        <th>Added on</th>
                         <th>Posted by</th>
                     </tr>
                 </thead>
@@ -26,8 +26,8 @@
                     {% for tFile in tFiles %}
                     <tr>
                         <td>{{ tFile.name }}</td>
-                        <td>{{ tFile.uploadTime }}</td>
                         <td><a href="{{ tFile.location }}">Load Link</a></td>
+                        <td>{{ tFile.uploadTime }}</td>
                         <td>{{ tFile.uploader }}</td>
                     </tr>
                     {% endfor %}
