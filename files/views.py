@@ -1,39 +1,40 @@
-#from django.shortcuts import render
-from django.http import HttpResponse
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
-from files.forms import TorrentFileForm
-from files.models import TorrentFile
 from django.contrib.auth import views
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+
+from files.forms import TorrentFileForm
+from files.models import TorrentFile
+
 
 def index(request):
     torrentFile = TorrentFile.objects.all()
     return render(request, 'index.html',{'tFiles':torrentFile})
 
+
 def register(request):
     return render(request, 'register.html')
 
-@login_required(login_url="/login/")
 
+@login_required(login_url="/login/")
 def get_name(request):
     if request.method == 'POST':
         fileUploadForm = TorrentFileForm(request.POST)
 
-
         if fileUploadForm.is_valid():
-            torrentForm = fileUploadForm.save(commit = False)
+            torrentForm = fileUploadForm.save(commit=False)
 
             # name of the uploader
             torrentForm.uploader = request.user.username
 
-            #address of the link
+            # address of the link
             torrentForm.name = request.POST.get('location', 'default_value')
 
             torrentForm.save()
-            #return HttpResponse("form is valid")
+            # return HttpResponse("form is valid")
             return redirect('profile')
         else:
             return HttpResponse("form is not valid")
@@ -42,10 +43,11 @@ def get_name(request):
         fileUploadForm = TorrentFileForm()
     return render(request, 'torrentFileUpload.html', {'form': fileUploadForm})
 
+
 def search(request, q):
     userQuery = request.GET['q']
     torrentFile = TorrentFile.objects.filter(name__icontains=userQuery)
-    return render(request, 'search.html',{'tFiles':torrentFile} )
+    return render(request, 'search.html', {'tFiles': torrentFile})
 
 '''
 def torrentDownload(request, torrentPath):
