@@ -2,41 +2,55 @@
 {%block content%}
 
 
-<div class="container d-flex justify-content-center jumbotron jumbotron-fluid my-2 py-4">
-    <form class="form-inline" action="search" method="get" >
-        <input class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" type="text" name="q" placeholder="Search for link">
-        <button type="input" class="btn btn-primary  mb-2">Search</button>
-    </form>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 container alert alert-info" role="alert">
+            <strong>Links</strong>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <table id="myTable" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Added on</th>
+                        <th>Link</th>
+                        <th>Posted by</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>tFile.name</td>
+                        <td>tFile.uploadTime</td>
+                        <td><a href="tFile.location">Load Link</a></td>
+                        <td>tFile.uploader</td>
+                    </tr>
+
+                    {% for tFile in tFiles %}
+                    <tr>
+                        <td>{{ tFile.name }}</td>
+                        <td>{{ tFile.uploadTime }}</td>
+                        <td><a href="{{ tFile.location }}">Load Link</a></td>
+                        <td>{{ tFile.uploader }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
-<div class="container alert alert-info" role="alert">
-<strong>Recent links</strong>
-</div>
 
-<div class="container">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Added on</th>
-                <th>Link</th>
-                <th>Posted by</th>
-            </tr>
-        </thead>
-
-
-        <tbody>
-            {% for tFile in tFiles %}
-            <tr>
-                <td>{{tFile.name}}</td>
-                <td>{{tFile.uploadTime}}</td>
-                <td><a href="{{tFile.location}}">Load Link</a></td>
-                <td>{{tFile.uploader}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-</div>
-
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            "paging": false,
+        });
+    });
+</script>
 
 {%endblock content%}
