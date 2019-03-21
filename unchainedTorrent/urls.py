@@ -41,7 +41,7 @@ urlpatterns = [
     # url(r'^upload/$', viewsFiles.model_form_upload, name='upload'),
     url(r'^upload/$', viewsFiles.get_name, name='upload'),
 
-    url(r'^search(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='search'),
+    # url(r'^search(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='search'),
 
     # url(r'^media(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='media'),
     # url(r'^search(?P<q>[a-zA-Z+-_]+)', viewsFiles.search, name='search'),

@@ -44,10 +44,10 @@ def get_name(request):
     return render(request, 'torrentFileUpload.html', {'form': fileUploadForm})
 
 
-def search(request, q):
-    userQuery = request.GET['q']
-    torrentFile = TorrentFile.objects.filter(name__icontains=userQuery)
-    return render(request, 'search.html', {'tFiles': torrentFile})
+# def search(request, q):
+#     userQuery = request.GET['q']
+#     torrentFile = TorrentFile.objects.filter(name__icontains=userQuery)
+#     return render(request, 'search.html', {'tFiles': torrentFile})
 
 '''
 def torrentDownload(request, torrentPath):
