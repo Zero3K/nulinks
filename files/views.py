@@ -11,8 +11,8 @@ from files.models import TorrentFile
 
 
 def index(request):
-    torrentFile = TorrentFile.objects.all()
-    return render(request, 'index.html',{'tFiles':torrentFile})
+    torrentFile = TorrentFile.objects.all().order_by('-uploadTime')
+    return render(request, 'index.html', {'tFiles': torrentFile})
 
 
 def register(request):

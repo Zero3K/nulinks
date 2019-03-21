@@ -52,5 +52,5 @@ def signup(request):
 
 @login_required(login_url="/login/")
 def profile(request):
-    torrentFile = TorrentFile.objects.filter(uploader__icontains=request.user.username)
+    torrentFile = TorrentFile.objects.filter(uploader__icontains=request.user.username).order_by('-uploadTime')
     return render(request, "profile.html", {"tFiles": torrentFile})
