@@ -1,3 +1,5 @@
+import urllib
+
 from django.conf import settings
 from django.contrib.auth import views
 from django.contrib.auth.decorators import login_required
@@ -11,17 +13,17 @@ from files.models import TorrentFile
 
 
 def index(request):
-    torrentFile = TorrentFile.objects.all().order_by('-uploadTime')
-    return render(request, 'index.html', {'tFiles': torrentFile})
+    torrentFile = TorrentFile.objects.all().order_by("-uploadTime")
+    return render(request, "index.html", {"tFiles": torrentFile})
 
 
 def register(request):
-    return render(request, 'register.html')
+    return render(request, "register.html")
 
 
 @login_required(login_url="/login/")
 def get_name(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         fileUploadForm = TorrentFileForm(request.POST)
 
         if fileUploadForm.is_valid():
@@ -31,17 +33,31 @@ def get_name(request):
             torrentForm.uploader = request.user.username
 
             # address of the link
-            torrentForm.name = request.POST.get('location', 'default_value')
+            url_location = request.POST.get("location")
+            if url_location:
+                name = None
+                if "fopnu" in url_location:
+                    if "chat:" in url_location:
+                        url_location_parsed = urllib.unquote(url_location)
+                        name = "Chat: " + url_location_parsed.split("/")[-1]
+                    elif "file:" in url_location:
+                        url_location_parsed = urllib.unquote(url_location)
+                        name = "File: " + url_location_parsed.split("/")[-1]
+            else:
+                torrentForm.name = "default_value"
+
+            if name:
+                torrentForm.name = name
 
             torrentForm.save()
             # return HttpResponse("form is valid")
-            return redirect('profile')
+            return redirect("profile")
         else:
             return HttpResponse("form is not valid")
         #    return HttpResponse("<h1>file not valid</h1>")
     else:
         fileUploadForm = TorrentFileForm()
-    return render(request, 'torrentFileUpload.html', {'form': fileUploadForm})
+    return render(request, "torrentFileUpload.html", {"form": fileUploadForm})
 
 
 # def search(request, q):
@@ -49,7 +65,7 @@ def get_name(request):
 #     torrentFile = TorrentFile.objects.filter(name__icontains=userQuery)
 #     return render(request, 'search.html', {'tFiles': torrentFile})
 
-'''
+"""
 def torrentDownload(request, torrentPath):
     file_path = os.torrentPath.join(settings.MEDIA_ROOT, torrentPath)
     if os.path.exists(file_path):
@@ -59,4 +75,4 @@ def torrentDownload(request, torrentPath):
             return response
     else:
         raise Http404
-'''
+"""
