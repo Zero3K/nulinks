@@ -49,6 +49,8 @@ def get_name(request):
 
             if name:
                 torrentForm.name = name
+            else:
+                torrentForm.name = url_location
 
             torrentForm.save()
             # return HttpResponse("form is valid")
