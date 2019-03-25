@@ -18,7 +18,6 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Link</th>
                         <th>Added on</th>
                     </tr>
                 </thead>
@@ -26,8 +25,7 @@
                 <tbody>
                     {% for tFile in tFiles %}
                     <tr>
-                        <td>{{ tFile.name|truncatechars:80 }}</td>
-                        <td><a href="{{ tFile.location }}">Load Link</a></td>
+                        <td><a target="_blank" href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
                         <td>{{ tFile.uploadTime }}</td>
                     </tr>
                     {% endfor %}

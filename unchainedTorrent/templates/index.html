@@ -17,7 +17,6 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Link</th>
                         <th>Added on</th>
                         <th>Posted by</th>
                     </tr>
@@ -26,8 +25,7 @@
                 <tbody>
                     {% for tFile in tFiles %}
                     <tr>
-                        <td>{{ tFile.name|truncatechars:80 }}</td>
-                        <td><a href="{{ tFile.location }}">Load Link</a></td>
+                        <td><a target="_blank" href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
                         <td>{{ tFile.uploadTime }}</td>
                         <td>{{ tFile.uploader }}</td>
                     </tr>
@@ -42,7 +40,6 @@
 <script>
     $(document).ready(function () {
         $('#myTable').DataTable({
-            "paging": false,
             language: {
                 searchPlaceholder: "   Search Links",
                 search: "",
