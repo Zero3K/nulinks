@@ -11,23 +11,31 @@
 
 </script>
 
-<div class=" container jumbotron mt-4" style="max-width:550px">
-    <div class="container">
-        <form action="/upload/" method="post" enctype="multipart/form-data" >
-          {% csrf_token %}
+<div class="container jumbotron mt-4" style="max-width:550px">
+    <form action="/upload/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
 
-            <div class="custom-file">
-                <label for="id_location">Paste Link:</label>
-                <input type="text" class="form-control" required id="id_location" name="location" onchange="updateLabel()">
-            </div>
+        <!-- <label for="id_location">Paste Link:</label>
+        <input type="text" class="form-control" required id="id_location" name="location" onchange="updateLabel()">
 
-            <div class=" d-flex justify-content-end mb-1 my-1">
-                    <button class="btn btn-primary" type="submit">Post Link</button>
-            </div>
+        <br>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select class="form-control" required id="category" name="category">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+        </div> -->
 
-        </form>
+        <div class=" d-flex justify-content-end mb-1 my-1">
+            <button class="btn btn-primary" type="submit">Post Link</button>
+        </div>
 
-        <a href="{% url 'home' %}">Back to home </a>
-    </div>
+    </form>
+
 </div>
 {% endblock %}

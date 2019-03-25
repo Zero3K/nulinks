@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from files.forms import TorrentFileForm
-from files.models import TorrentFile
+from files.models import TorrentFile, MtCategory
 
 
 def index(request):
@@ -34,6 +34,7 @@ def get_name(request):
 
             # address of the link
             url_location = request.POST.get("location")
+
             if url_location:
                 name = None
                 if "fopnu" in url_location:
