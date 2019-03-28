@@ -1,5 +1,5 @@
 # Nulinks
-### The website (available at https://nulinks.pw) is built using Python, Django, HTML, CSS, Bootstrap and JavaScript.
+### The website is built using Python, Django, HTML, CSS, Bootstrap and JavaScript.
 #### Features of the website:
 - Creation of a user account.
 - Posting Fopnu links by registered users.
