@@ -7,16 +7,16 @@
 
 ## Home
 
-![Home](images/Home.png | width=1000)
+![Home](images/Home.png)
 
 ## Login
-![Login](images/Login.png | width=1000)
+![Login](images/Login.png)
 
 ## Profile
-![Profile](images/Profile.png | width=1000)
+![Profile](images/Profile.png)
 
 ## Signup
-![Signup](images/Register.png | width=1000)
+![Signup](images/Register.png)
 
 ## Post Link
-![Post Link](images/Post_Link.png | width=1000)
+![Post Link](images/Post_Link.png)
