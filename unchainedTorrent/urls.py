@@ -17,38 +17,39 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-#from unchainedTorrent.files import views as viewsFiles
-#for signup
+# for signup
 from tuser import views as userViews
 from files import views as viewsFiles
 
-#for media
+# for media
 from django.conf import settings
 from django.conf.urls.static import static
-
 
 
 urlpatterns = [
     url(r'^$', viewsFiles.index, name='home'),
 
-    #url(r'/^$', viewsFiles.index, name='urlHome'),
+    # url(r'/^$', viewsFiles.index, name='urlHome'),
 
     url(r'^profile/$', userViews.profile, name='profile'),
-    #url(r'^(?P<q>[0-9a-zA-Z+-_]+)$', viewsFiles.search, name='home2'),
+    # url(r'^(?P<q>[0-9a-zA-Z+-_]+)$', viewsFiles.search, name='home2'),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', userViews.myLogin, name='urlLogin'),
     url(r'^logout/$',userViews.myLogout,  name='urlLogout'),
 
     url(r'^register/$', userViews.signup, name='register'),
-    #url(r'^upload/$', viewsFiles.model_form_upload, name='upload'),
+    # url(r'^upload/$', viewsFiles.model_form_upload, name='upload'),
     url(r'^upload/$', viewsFiles.get_name, name='upload'),
 
-    url(r'^search(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='search'),
+    # url(r'^search(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='search'),
 
-#    url(r'^media(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='media'),
-#     url(r'^search(?P<q>[a-zA-Z+-_]+)', viewsFiles.search, name='search'),
-#    url(r'torrents/(P<torrentPath>)/', viewsFiles.torrentDownload, name = "torrentDownload"),
+    # url(r'^media(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='media'),
+    # url(r'^search(?P<q>[a-zA-Z+-_]+)', viewsFiles.search, name='search'),
+    # url(r'torrents/(P<torrentPath>)/', viewsFiles.torrentDownload, name = "torrentDownload"),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

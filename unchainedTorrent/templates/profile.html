@@ -2,32 +2,50 @@
 
 {% block content %}
 
-<div class="container my-2 py-2">
-    <div class="alert alert-info" role="alert">
-        <strong>Hi {{request.user.username}}</strong>, here are the links that you have posted:
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 container alert alert-info" role="alert">
+            <strong>Hi {{request.user.username}}</strong>, here are the links that you have posted:
+        </div>
     </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+
+            <table id="myTable" class="table table-striped" style="width:100%">
+                <caption>Click on column headers to sort rows. Clicking again will sort in descending order.</caption>
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Added on</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for tFile in tFiles %}
+                    <tr>
+                        <td><a target="_blank" href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
+                        <td>{{ tFile.uploadTime }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 
-<div class="container">
-    <table class="table table-default" >
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Added on</th>
-                <th>Link</th>
-            </tr>
-        </thead>
-
-        {% for tFile in tFiles %}
-        <tbody>
-            <tr>
-                <td>{{tFile.name}}</td>
-                <td>{{tFile.uploadTime}}</td>
-                <td><a href="{{tFile.location}}">Load link</a></td>
-            </tr>
-        </tbody>
-        {% endfor %}
-    </table>
-
-</div>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            "paging": false,
+            language: {
+                searchPlaceholder: "   Search Links",
+                search: "",
+            },
+            stateSave: true
+        });
+    });
+</script>
 {% endblock content %}
