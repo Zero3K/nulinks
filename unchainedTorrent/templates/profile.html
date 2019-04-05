@@ -27,7 +27,7 @@
                     {% for tFile in tFiles %}
                     <tr>
                         <td>{{ tFile.category }}</td>
-                        <td><a target="_blank" href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
+                        <td><a href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
                         <td>{{ tFile.uploadTime }}</td>
                     </tr>
                     {% endfor %}
