@@ -17,6 +17,7 @@
 
                 <thead>
                     <tr>
+                        <th>Category</th>
                         <th>Name</th>
                         <th>Added on</th>
                     </tr>
@@ -25,6 +26,7 @@
                 <tbody>
                     {% for tFile in tFiles %}
                     <tr>
+                        <td>{{ tFile.category }}</td>
                         <td><a target="_blank" href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
                         <td>{{ tFile.uploadTime }}</td>
                     </tr>
