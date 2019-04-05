@@ -4,45 +4,31 @@
 {% block content %}
 
 <div class="container jumbotron py-2 mt-4" style="max-width:540px">
-        <form class="form-inline" action="/login/" method="post">
-            {% csrf_token %}
+    <form class="form-inline" action="/login/" method="post">
+        {% csrf_token %}
 
-            <div class="row" >
-                <div class="col-lg-6">
-                    <label for="username">Username: </label>
-                </div>
-                <div class="col-lg-6">
-                    <input type="text" class="form-control mb-2 mr-sm-2" name="username" id="username">
-                </div>
-
-
-
-                <div class="col-lg-6">
-                    <label for="password">Password:</label>
-                </div>
-                <div class="col-lg-6">
-                    <input type="password" class="form-control mb-2 mr-sm-2" name="password" id="password" >
-                </div>
-
-                <div class="col-12">
-                    <div class=" d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary mr-2">Login</button>
-                    </div>
-
-                </div>
-
-
-
-
-
-
+        <div class="row">
+            <div class="col-lg-6">
+                <label for="username">Username: </label>
+            </div>
+            <div class="col-lg-6">
+                <input type="text" class="form-control mb-2 mr-sm-2" name="username" id="username">
             </div>
 
+            <div class="col-lg-6">
+                <label for="password">Password:</label>
+            </div>
+            <div class="col-lg-6">
+                <input type="password" class="form-control mb-2 mr-sm-2" name="password" id="password">
+            </div>
 
-
-
-
-        </form>
+            <div class="col-12">
+                <div class=" d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary mr-2">Login</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 
