@@ -1,4 +1,4 @@
-import urllib
+from urllib.parse import unquote
 
 from django.conf import settings
 from django.contrib.auth import views
@@ -39,10 +39,10 @@ def get_name(request):
                 name = None
                 if "fopnu" in url_location:
                     if "chat:" in url_location:
-                        url_location_parsed = urllib.unquote(url_location)
-                        name = "Chat: " + url_location_parsed.split("/")[-1]
+                        url_location_parsed = unquote(url_location)
+                        name = url_location_parsed.split("/")[-1]
                     elif "file:" in url_location:
-                        url_location_parsed = urllib.unquote(url_location)
+                        url_location_parsed = unquote(url_location)
                         name = "File: " + url_location_parsed.split("/")[-1]
             else:
                 torrentForm.name = "default_value"
