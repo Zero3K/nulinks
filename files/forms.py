@@ -1,5 +1,5 @@
 from django import forms
-from files.models import TorrentFile
+from files.models import TorrentFile, MtCategory
 
 
 class TorrentFileForm(forms.ModelForm):
@@ -8,3 +8,7 @@ class TorrentFileForm(forms.ModelForm):
     class Meta:
         model = TorrentFile
         fields = ('location', 'category')
+
+    def __init__(self, *args, **kwargs):
+        super(TorrentFileForm, self).__init__(*args, **kwargs)
+        self.fields['category'].queryset = MtCategory.objects.order_by('name')
