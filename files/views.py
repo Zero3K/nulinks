@@ -38,12 +38,16 @@ def get_name(request):
             if url_location:
                 name = None
                 if "fopnu" in url_location:
-                    if "chat:" in url_location:
+                    words = ["chat:", "file:", "user:"]
+                    if any(word in url_location for word in words):
                         url_location_parsed = unquote(url_location)
                         name = url_location_parsed.split("/")[-1]
-                    elif "file:" in url_location:
-                        url_location_parsed = unquote(url_location)
-                        name = "File: " + url_location_parsed.split("/")[-1]
+                    # elif "file:" in url_location:
+                    #     url_location_parsed = unquote(url_location)
+                    #     name = url_location_parsed.split("/")[-1]
+                    # elif "user:" in url_location:
+                    #     url_location_parsed = unquote(url_location)
+                    #     name = url_location_parsed.split("/")[-1]
             else:
                 torrentForm.name = "default_value"
 
