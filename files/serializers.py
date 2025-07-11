@@ -26,6 +26,17 @@ class TorrentFileSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'location', 'uploader', 'uploadTime', 'category', 'category_id']
         read_only_fields = ['id', 'uploader', 'uploadTime']
 
+    def validate_location(self, value):
+        """Check for duplicate links"""
+        existing_file = TorrentFile.find_duplicate(value)
+        if existing_file:
+            raise serializers.ValidationError(
+                f'This link has already been posted by {existing_file.uploader} '
+                f'on {existing_file.uploadTime.strftime("%Y-%m-%d %H:%M")} '
+                f'with the name "{existing_file.name}".'
+            )
+        return value
+
     def create(self, validated_data):
         # Extract name from location if not provided
         location = validated_data.get('location', '')
@@ -60,6 +71,30 @@ class BulkTorrentFileSerializer(serializers.Serializer):
         required=False,
         allow_null=True
     )
+
+    def validate_links(self, value):
+        """Check for duplicate links in the batch"""
+        duplicates = []
+        for link in value:
+            existing_file = TorrentFile.find_duplicate(link)
+            if existing_file:
+                duplicates.append({
+                    'link': link,
+                    'uploader': existing_file.uploader,
+                    'upload_time': existing_file.uploadTime.strftime("%Y-%m-%d %H:%M"),
+                    'name': existing_file.name
+                })
+        
+        if duplicates:
+            error_messages = []
+            for dup in duplicates:
+                error_messages.append(
+                    f'Link "{dup["link"]}" has already been posted by {dup["uploader"]} '
+                    f'on {dup["upload_time"]} with the name "{dup["name"]}".'
+                )
+            raise serializers.ValidationError(error_messages)
+        
+        return value
 
     def create(self, validated_data):
         links = validated_data['links']

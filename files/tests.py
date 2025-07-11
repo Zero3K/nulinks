@@ -5,6 +5,205 @@ import django
 from packaging import version
 from files.models import TorrentFile, MtCategory
 
+from django.test import TestCase, Client
+from django.contrib.auth.models import User
+from django.urls import reverse
+from django.core.exceptions import ValidationError
+import django
+from packaging import version
+from files.models import TorrentFile, MtCategory
+from files.forms import TorrentFileForm
+from rest_framework.test import APIClient
+from rest_framework.authtoken.models import Token
+
+
+class DuplicateLinkDetectionTest(TestCase):
+    def setUp(self):
+        """Set up test data for duplicate detection tests."""
+        # Create test users
+        self.user1 = User.objects.create_user(username='testuser1', password='testpass123')
+        self.user2 = User.objects.create_user(username='testuser2', password='testpass123')
+        
+        # Create test categories
+        self.category1 = MtCategory.objects.create(name='Movies')
+        self.category2 = MtCategory.objects.create(name='Music')
+        
+        # Create a test link that will be used for duplicate testing
+        self.existing_link = 'fopnu://file:/test-movie.mkv'
+        self.torrent_file1 = TorrentFile.objects.create(
+            name='Test Movie',
+            uploader='testuser1',
+            location=self.existing_link,
+            category=self.category1
+        )
+        
+        self.client = Client()
+        self.api_client = APIClient()
+
+    def test_find_duplicate_method(self):
+        """Test the find_duplicate class method."""
+        # Test finding existing duplicate
+        duplicate = TorrentFile.find_duplicate(self.existing_link)
+        self.assertEqual(duplicate, self.torrent_file1)
+        
+        # Test with non-existing link
+        non_duplicate = TorrentFile.find_duplicate('fopnu://file:/non-existing.mkv')
+        self.assertIsNone(non_duplicate)
+
+    def test_form_validation_duplicate_detection(self):
+        """Test form validation prevents duplicate links."""
+        form_data = {
+            'location': self.existing_link,
+            'category': self.category2.id
+        }
+        form = TorrentFileForm(data=form_data)
+        
+        # Form should be invalid due to duplicate link
+        self.assertFalse(form.is_valid())
+        self.assertIn('location', form.errors)
+        self.assertIn('This link has already been posted', str(form.errors['location']))
+
+    def test_form_validation_allows_new_links(self):
+        """Test form validation allows new unique links."""
+        form_data = {
+            'location': 'fopnu://file:/unique-new-file.mkv',
+            'category': self.category2.id
+        }
+        form = TorrentFileForm(data=form_data)
+        
+        # Form should be valid for new unique link
+        self.assertTrue(form.is_valid())
+
+    def test_web_interface_duplicate_prevention(self):
+        """Test web interface prevents duplicate link submission."""
+        self.client.login(username='testuser2', password='testpass123')
+        
+        response = self.client.post(reverse('upload'), {
+            'location': self.existing_link,
+            'category': self.category2.id
+        })
+        
+        # Should return to form with error, not redirect to profile
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'This link has already been posted')
+        
+        # Verify no new TorrentFile was created
+        torrent_count = TorrentFile.objects.filter(location=self.existing_link).count()
+        self.assertEqual(torrent_count, 1)  # Only the original one
+
+    def test_web_interface_allows_new_links(self):
+        """Test web interface allows new unique links."""
+        self.client.login(username='testuser2', password='testpass123')
+        
+        new_link = 'fopnu://file:/unique-web-file.mkv'
+        response = self.client.post(reverse('upload'), {
+            'location': new_link,
+            'category': self.category2.id
+        })
+        
+        # Should redirect to profile after successful submission
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('profile'))
+        
+        # Verify new TorrentFile was created
+        new_file = TorrentFile.objects.get(location=new_link)
+        self.assertEqual(new_file.uploader, 'testuser2')
+
+    def test_api_single_link_duplicate_prevention(self):
+        """Test API prevents duplicate single link submission."""
+        # Create API token for user2
+        token = Token.objects.create(user=self.user2)
+        self.api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        
+        response = self.api_client.post('/api/links/', {
+            'location': self.existing_link,
+            'category_id': self.category2.id
+        })
+        
+        # Should return 400 Bad Request with validation error
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('location', response.data)
+        self.assertIn('This link has already been posted', str(response.data['location']))
+
+    def test_api_single_link_allows_new_links(self):
+        """Test API allows new unique single links."""
+        # Create API token for user2
+        token = Token.objects.create(user=self.user2)
+        self.api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        
+        new_link = 'fopnu://file:/unique-api-file.mkv'
+        response = self.api_client.post('/api/links/', {
+            'location': new_link,
+            'category_id': self.category2.id
+        })
+        
+        # Should return 201 Created
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['location'], new_link)
+        self.assertEqual(response.data['uploader'], 'testuser2')
+
+    def test_api_bulk_link_duplicate_prevention(self):
+        """Test API prevents duplicate bulk link submission."""
+        # Create API token for user2
+        token = Token.objects.create(user=self.user2)
+        self.api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        
+        response = self.api_client.post('/api/links/bulk/', {
+            'links': [
+                'fopnu://file:/new-file1.mkv',
+                self.existing_link,  # This is a duplicate
+                'fopnu://file:/new-file2.mkv'
+            ],
+            'category_id': self.category2.id
+        })
+        
+        # Should return 400 Bad Request with validation error
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('links', response.data)
+        self.assertIn('has already been posted', str(response.data['links']))
+
+    def test_api_bulk_link_allows_all_new_links(self):
+        """Test API allows bulk submission when all links are unique."""
+        # Create API token for user2
+        token = Token.objects.create(user=self.user2)
+        self.api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        
+        new_links = [
+            'fopnu://file:/bulk-file1.mkv',
+            'fopnu://file:/bulk-file2.mkv',
+            'fopnu://file:/bulk-file3.mkv'
+        ]
+        
+        response = self.api_client.post('/api/links/bulk/', {
+            'links': new_links,
+            'category_id': self.category2.id
+        })
+        
+        # Should return 201 Created
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['count'], 3)
+        self.assertEqual(len(response.data['created']), 3)
+        
+        # Verify all files were created
+        for link in new_links:
+            file_exists = TorrentFile.objects.filter(location=link).exists()
+            self.assertTrue(file_exists)
+
+    def test_duplicate_detection_error_message_format(self):
+        """Test that duplicate detection error messages contain useful information."""
+        form_data = {
+            'location': self.existing_link,
+            'category': self.category2.id
+        }
+        form = TorrentFileForm(data=form_data)
+        form.is_valid()
+        
+        error_message = str(form.errors['location'][0])
+        self.assertIn('testuser1', error_message)  # Original uploader
+        self.assertIn('Test Movie', error_message)  # Original name
+        self.assertIn('already been posted', error_message)  # Clear message
+
+
 # CVE-2019-19844 Security Test
 class CVE_2019_19844_Test(TestCase):
     def test_django_version_cve_2019_19844_fixed(self):
