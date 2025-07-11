@@ -16,6 +16,7 @@ Including another URLconf
 
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 # for signup
 from tuser import views as userViews
@@ -41,6 +42,13 @@ urlpatterns = [
     # url(r'^upload/$', viewsFiles.model_form_upload, name='upload'),
     url(r'^upload/$', viewsFiles.get_name, name='upload'),
     url(r'^edit/(?P<file_id>[0-9]+)/$', viewsFiles.edit_torrent_file, name='edit_torrent_file'),
+
+    # Password reset URLs
+    url(r'^password_reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    url(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    url(r'^reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     # API URLs
     url(r'^api/', include('files.api_urls')),
