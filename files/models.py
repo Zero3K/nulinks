@@ -22,6 +22,17 @@ class TorrentFile(TimestampFields):
 
     def __str__(self):
         return self.name.title()
+    
+    @classmethod
+    def find_duplicate(cls, location):
+        """
+        Check if a link with the same location already exists.
+        Returns the existing TorrentFile if found, None otherwise.
+        """
+        try:
+            return cls.objects.get(location=location)
+        except cls.DoesNotExist:
+            return None
 
 
 class MtCategory(TimestampFields):

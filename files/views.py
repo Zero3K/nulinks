@@ -61,8 +61,8 @@ def get_name(request):
             # return HttpResponse("form is valid")
             return redirect("profile")
         else:
-            return HttpResponse("form is not valid")
-        #    return HttpResponse("<h1>file not valid</h1>")
+            # Form is not valid, return to template with errors
+            return render(request, "torrentFileUpload.html", {"form": fileUploadForm})
     else:
         fileUploadForm = TorrentFileForm()
     return render(request, "torrentFileUpload.html", {"form": fileUploadForm})
