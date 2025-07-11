@@ -1,6 +1,27 @@
 {%extends 'base.html'%}
 {%block content%}
 
+<!-- Search Form -->
+<div class="container-fluid mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form class="form-inline justify-content-center" action="{% url 'search' %}" method="get">
+                <div class="form-group mr-2 mb-2">
+                    <select class="form-control" name="category" id="category">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mr-2 mb-2">
+                    <input class="form-control" type="text" name="q" placeholder="Search for links" value="">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="container-fluid">
     <!-- <div class="row">

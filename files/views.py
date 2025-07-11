@@ -14,7 +14,8 @@ from files.models import TorrentFile, MtCategory
 
 def index(request):
     torrentFile = TorrentFile.objects.all().order_by("-uploadTime")
-    return render(request, "index.html", {"tFiles": torrentFile})
+    categories = MtCategory.objects.all().order_by('name')
+    return render(request, "index.html", {"tFiles": torrentFile, "categories": categories})
 
 
 def register(request):
@@ -67,10 +68,42 @@ def get_name(request):
     return render(request, "torrentFileUpload.html", {"form": fileUploadForm})
 
 
-# def search(request, q):
-#     userQuery = request.GET['q']
-#     torrentFile = TorrentFile.objects.filter(name__icontains=userQuery)
-#     return render(request, 'search.html', {'tFiles': torrentFile})
+def search(request):
+    """Search for torrent files with optional category filtering"""
+    query = request.GET.get('q', '')
+    category_id = request.GET.get('category', '')
+    
+    # Start with all files
+    torrent_files = TorrentFile.objects.all()
+    
+    # Apply text search filter if query is provided
+    if query:
+        torrent_files = torrent_files.filter(name__icontains=query)
+    
+    # Apply category filter if category is selected
+    selected_category_obj = None
+    if category_id:
+        try:
+            selected_category_obj = MtCategory.objects.get(id=category_id)
+            torrent_files = torrent_files.filter(category_id=category_id)
+        except MtCategory.DoesNotExist:
+            pass
+    
+    # Order by upload time (newest first)
+    torrent_files = torrent_files.order_by('-uploadTime')
+    
+    # Get all categories for the dropdown
+    categories = MtCategory.objects.all().order_by('name')
+    
+    context = {
+        'tFiles': torrent_files,
+        'query': query,
+        'selected_category': category_id,
+        'selected_category_obj': selected_category_obj,
+        'categories': categories,
+    }
+    
+    return render(request, 'search.html', context)
 
 """
 def torrentDownload(request, torrentPath):
