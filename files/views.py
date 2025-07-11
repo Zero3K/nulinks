@@ -5,10 +5,10 @@ from django.contrib.auth import views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.http import HttpResponse, Http404
+from django.shortcuts import redirect, render, get_object_or_404
 
-from files.forms import TorrentFileForm
+from files.forms import TorrentFileForm, TorrentFileEditForm
 from files.models import TorrentFile, MtCategory
 
 
@@ -83,3 +83,26 @@ def torrentDownload(request, torrentPath):
     else:
         raise Http404
 """
+
+
+@login_required(login_url="/login/")
+def edit_torrent_file(request, file_id):
+    """Edit category of a torrent file. Only the uploader can edit their own files."""
+    torrent_file = get_object_or_404(TorrentFile, id=file_id)
+    
+    # Check if the current user is the uploader
+    if torrent_file.uploader != request.user.username:
+        raise Http404("You can only edit your own files")
+    
+    if request.method == "POST":
+        form = TorrentFileEditForm(request.POST, instance=torrent_file)
+        if form.is_valid():
+            form.save()
+            return redirect("profile")
+    else:
+        form = TorrentFileEditForm(instance=torrent_file)
+    
+    return render(request, "edit_torrent_file.html", {
+        "form": form, 
+        "torrent_file": torrent_file
+    })

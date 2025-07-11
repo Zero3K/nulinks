@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^register/$', userViews.signup, name='register'),
     # url(r'^upload/$', viewsFiles.model_form_upload, name='upload'),
     url(r'^upload/$', viewsFiles.get_name, name='upload'),
+    url(r'^edit/(?P<file_id>[0-9]+)/$', viewsFiles.edit_torrent_file, name='edit_torrent_file'),
 
     # url(r'^search(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='search'),
 

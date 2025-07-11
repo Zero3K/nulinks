@@ -20,6 +20,7 @@
                         <th>Category</th>
                         <th>Name</th>
                         <th>Added on</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 
@@ -29,6 +30,11 @@
                         <td>{{ tFile.category }}</td>
                         <td><a href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
                         <td>{{ tFile.uploadTime }}</td>
+                        <td>
+                            <a href="{% url 'edit_torrent_file' tFile.id %}" class="btn btn-sm btn-outline-primary">
+                                Edit Category
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
