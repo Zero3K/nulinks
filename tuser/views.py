@@ -45,6 +45,7 @@ def signup(request):
             user = authenticate(username=username, password=raw_password)
             auth_login(request, user)
             return redirect("home")
+        # If form is not valid, it will fall through to render with errors
     else:
         form = UserCreationForm()
     return render(request, "register.html", {"form": form})

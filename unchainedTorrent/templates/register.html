@@ -4,10 +4,23 @@
     <form method="post">
         {% csrf_token %}
 
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div>{{ error|escape }}</div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div>{{ error|escape }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="row">
             <div class="col-lg-12">
                 <label for="id_username">Username:</label>
-                <input class="form-control mb-2 mr-sm-2"type="text" name="username" value="" maxlength="150" autofocus required id="id_username">
+                <input class="form-control mb-2 mr-sm-2"type="text" name="username" value="{{ form.username.value|default:'' }}" maxlength="150" autofocus required id="id_username">
             </div>
         </div>
         <div class="row">
