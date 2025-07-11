@@ -5,6 +5,7 @@ from django.contrib.auth import views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 
@@ -13,9 +14,19 @@ from files.models import TorrentFile, MtCategory
 
 
 def index(request):
-    torrentFile = TorrentFile.objects.all().order_by("-uploadTime")
+    torrent_files = TorrentFile.objects.all().order_by("-uploadTime")
     categories = MtCategory.objects.all().order_by('name')
-    return render(request, "index.html", {"tFiles": torrentFile, "categories": categories})
+    
+    # Add pagination
+    paginator = Paginator(torrent_files, 20)  # Show 20 files per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "index.html", {
+        "tFiles": page_obj,
+        "categories": categories,
+        "page_obj": page_obj,
+    })
 
 
 def register(request):
