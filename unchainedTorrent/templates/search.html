@@ -2,38 +2,50 @@
 {% block content %}
 </br></br>
 
+<!-- Search Form -->
 <div class="container d-flex justify-content-center ">
-    <form class="form-inline" action="search" method="get" >
-        <input class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" type="text" name="q" placeholder="Search for links">
-        <button type="input" class="btn btn-primary  mb-2">Search</button>
+    <form class="form-inline" action="{% url 'search' %}" method="get">
+        <div class="form-group mr-2 mb-2">
+            <select class="form-control" name="category" id="category">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == selected_category %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <input class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" type="text" name="q" placeholder="Search for links" value="{{ query }}">
+        <button type="submit" class="btn btn-primary mb-2">Search</button>
     </form>
 </div>
 
-        <div class="container-fluid">
-            <h3 >Result</h3>
-            <table class="table table-hower">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Added on</th>
-                        <th>Link</th>
-                        <th>Posted by</th>
-                    </tr>
-                </thead>
-                {% for tFile in tFiles %}
-                <tbody>
-                    <tr >
-                        <th scope="row"></th>
-                        <td>{{tFile.name}}</td>
-                        <td>{{tFile.uploadTime}}</td>
-                        <td><a href="{{tFile.location}}">Load Link</a></td>
-                        <td>{{tFile.uploader}}</td>
-                    </tr>
-                </tbody>
-                {% endfor %}
-            </table>
-        </div>
-
-
+<div class="container-fluid">
+    <h3>Results{% if query %} for "{{ query }}"{% endif %}{% if selected_category_obj %} in {{ selected_category_obj.name }}{% endif %}</h3>
+    {% if tFiles %}
+        <p>Found {{ tFiles|length }} result{{ tFiles|length|pluralize }}.</p>
+    {% else %}
+        <p>No results found. Try a different search term or category.</p>
+    {% endif %}
+    
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Name</th>
+                <th>Added on</th>
+                <th>Posted by</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tFile in tFiles %}
+            <tr>
+                <td>{{ tFile.category|default:"No Category" }}</td>
+                <td><a href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
+                <td>{{ tFile.uploadTime }}</td>
+                <td>{{ tFile.uploader }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock content %}

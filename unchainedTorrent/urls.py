@@ -32,7 +32,7 @@ urlpatterns = [
     # url(r'/^$', viewsFiles.index, name='urlHome'),
 
     url(r'^profile/$', userViews.profile, name='profile'),
-    # url(r'^(?P<q>[0-9a-zA-Z+-_]+)$', viewsFiles.search, name='home2'),
+    url(r'^search/$', viewsFiles.search, name='search'),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', userViews.myLogin, name='urlLogin'),
     url(r'^logout/$',userViews.myLogout,  name='urlLogout'),
