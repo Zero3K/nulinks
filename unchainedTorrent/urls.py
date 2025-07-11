@@ -42,6 +42,9 @@ urlpatterns = [
     url(r'^upload/$', viewsFiles.get_name, name='upload'),
     url(r'^edit/(?P<file_id>[0-9]+)/$', viewsFiles.edit_torrent_file, name='edit_torrent_file'),
 
+    # API URLs
+    url(r'^api/', include('files.api_urls')),
+
     # url(r'^search(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='search'),
 
     # url(r'^media(?P<q>[0-9a-zA-Z+-_]+)', viewsFiles.search, name='media'),
