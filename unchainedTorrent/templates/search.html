@@ -40,7 +40,7 @@
             <tr>
                 <td>{{ tFile.category|default:"No Category" }}</td>
                 <td><a href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
-                <td>{{ tFile.uploadTime }}</td>
+                <td data-timestamp="{{ tFile.uploadTime|date:'c' }}">{{ tFile.uploadTime }}</td>
                 <td>{{ tFile.uploader }}</td>
             </tr>
             {% endfor %}
