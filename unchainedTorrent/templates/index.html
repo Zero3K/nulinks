@@ -40,15 +40,160 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        $('#myTable').DataTable({
-            language: {
-                searchPlaceholder: "   Search Links",
-                search: "",
-            },
-            stateSave: true
+    document.addEventListener('DOMContentLoaded', function() {
+        // Custom table sorting with state persistence
+        const table = document.getElementById('myTable');
+        const tbody = table.querySelector('tbody');
+        const headers = table.querySelectorAll('thead th');
+        let currentSort = { column: -1, direction: 'asc' };
+        
+        // Load saved sorting state
+        const savedSort = localStorage.getItem('nulinks_table_sort');
+        if (savedSort) {
+            try {
+                currentSort = JSON.parse(savedSort);
+                // Apply saved sorting on page load
+                if (currentSort.column >= 0) {
+                    sortTable(currentSort.column, currentSort.direction, false);
+                    updateSortIndicator(currentSort.column, currentSort.direction);
+                }
+            } catch (e) {
+                console.log('Error loading saved sort state:', e);
+            }
+        }
+        
+        // Add click handlers to column headers
+        headers.forEach(function(header, index) {
+            header.style.cursor = 'pointer';
+            header.style.userSelect = 'none';
+            
+            header.addEventListener('click', function() {
+                let direction = 'asc';
+                // If clicking the same column, toggle direction
+                if (currentSort.column === index) {
+                    direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                }
+                
+                sortTable(index, direction, true);
+                currentSort = { column: index, direction: direction };
+                
+                // Save sort state to localStorage
+                localStorage.setItem('nulinks_table_sort', JSON.stringify(currentSort));
+                
+                updateSortIndicator(index, direction);
+            });
+            
+            // Add hover effect
+            header.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f5f5f5';
+            });
+            
+            header.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('sort-asc') && !this.classList.contains('sort-desc')) {
+                    this.style.backgroundColor = '';
+                }
+            });
         });
+        
+        function sortTable(columnIndex, direction, animate) {
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            rows.sort(function(a, b) {
+                const aCell = a.querySelectorAll('td')[columnIndex];
+                const bCell = b.querySelectorAll('td')[columnIndex];
+                
+                if (!aCell || !bCell) return 0;
+                
+                const aText = aCell.textContent.trim();
+                const bText = bCell.textContent.trim();
+                
+                // Special handling for date column (assuming it's column 2 - "Added on")
+                if (columnIndex === 2) {
+                    const aDate = new Date(aText);
+                    const bDate = new Date(bText);
+                    
+                    if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) {
+                        // Fallback to text comparison if date parsing fails
+                        const comparison = aText.localeCompare(bText);
+                        return direction === 'asc' ? comparison : -comparison;
+                    }
+                    
+                    return direction === 'asc' ? aDate - bDate : bDate - aDate;
+                } else {
+                    // Text sorting with numeric support
+                    const comparison = aText.localeCompare(bText, undefined, { numeric: true });
+                    return direction === 'asc' ? comparison : -comparison;
+                }
+            });
+            
+            // Clear table and add sorted rows
+            tbody.innerHTML = '';
+            
+            if (animate) {
+                tbody.style.opacity = '0.5';
+            }
+            
+            rows.forEach(function(row) {
+                tbody.appendChild(row);
+            });
+            
+            if (animate) {
+                setTimeout(function() {
+                    tbody.style.opacity = '1';
+                }, 100);
+            }
+        }
+        
+        function updateSortIndicator(columnIndex, direction) {
+            // Remove all existing sort indicators and classes
+            headers.forEach(function(header) {
+                header.classList.remove('sort-asc', 'sort-desc');
+                const indicator = header.querySelector('.sort-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+                header.style.backgroundColor = '';
+            });
+            
+            // Add sort indicator to current column
+            const header = headers[columnIndex];
+            header.classList.add('sort-' + direction);
+            header.style.backgroundColor = '#e9ecef';
+            
+            const arrow = direction === 'asc' ? '↑' : '↓';
+            const indicator = document.createElement('span');
+            indicator.className = 'sort-indicator';
+            indicator.style.fontWeight = 'bold';
+            indicator.style.color = '#007bff';
+            indicator.textContent = ' ' + arrow;
+            header.appendChild(indicator);
+        }
     });
 </script>
+
+<style>
+    #myTable thead th {
+        cursor: pointer;
+        user-select: none;
+        transition: background-color 0.2s;
+    }
+    
+    #myTable thead th:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .sort-indicator {
+        font-weight: bold;
+        color: #007bff;
+    }
+    
+    .sort-asc, .sort-desc {
+        background-color: #e9ecef;
+    }
+    
+    #myTable tbody {
+        transition: opacity 0.2s;
+    }
+</style>
 
 {%endblock content%}
