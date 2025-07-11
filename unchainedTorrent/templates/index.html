@@ -49,7 +49,7 @@
                     <tr>
                         <td>{{ tFile.category }}</td>
                         <td><a href="{{ tFile.location }}">{{ tFile.name|truncatechars:80 }}</a></td>
-                        <td>{{ tFile.uploadTime }}</td>
+                        <td data-timestamp="{{ tFile.uploadTime|date:'c' }}">{{ tFile.uploadTime }}</td>
                         <td>{{ tFile.uploader }}</td>
                     </tr>
                     {% endfor %}
@@ -130,16 +130,22 @@
                 
                 // Special handling for date column (assuming it's column 2 - "Added on")
                 if (columnIndex === 2) {
-                    const aDate = new Date(aText);
-                    const bDate = new Date(bText);
+                    // Use data-timestamp attribute for reliable date parsing
+                    const aTimestamp = aCell.getAttribute('data-timestamp');
+                    const bTimestamp = bCell.getAttribute('data-timestamp');
                     
-                    if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) {
-                        // Fallback to text comparison if date parsing fails
-                        const comparison = aText.localeCompare(bText);
-                        return direction === 'asc' ? comparison : -comparison;
+                    if (aTimestamp && bTimestamp) {
+                        const aDate = new Date(aTimestamp);
+                        const bDate = new Date(bTimestamp);
+                        
+                        if (!isNaN(aDate.getTime()) && !isNaN(bDate.getTime())) {
+                            return direction === 'asc' ? aDate - bDate : bDate - aDate;
+                        }
                     }
                     
-                    return direction === 'asc' ? aDate - bDate : bDate - aDate;
+                    // Fallback to text comparison if timestamp parsing fails
+                    const comparison = aText.localeCompare(bText);
+                    return direction === 'asc' ? comparison : -comparison;
                 } else {
                     // Text sorting with numeric support
                     const comparison = aText.localeCompare(bText, undefined, { numeric: true });
